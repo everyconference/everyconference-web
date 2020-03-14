@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div>
-      <logo />
       <h1 class="title">
         everyconference-web
       </h1>
@@ -24,18 +23,27 @@
           GitHub
         </a>
       </div>
+      <div v-for="converence in converences" :key="converence.url">
+        <ConferenceItem :conference="converence" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+import axios from 'axios'
+import { createComponent } from '@vue/composition-api'
+import ConferenceItem from '~/components/ConferenceItem.vue'
 
-export default {
+export default createComponent({
   components: {
-    Logo
+    ConferenceItem
+  },
+  async asyncData () {
+    const { data: converences } = await axios.get('https://raw.githubusercontent.com/tech-conferences/conference-data/master/conferences/2020/javascript.json')
+    return { converences }
   }
-}
+})
 </script>
 
 <style>
