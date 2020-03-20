@@ -1,31 +1,16 @@
 <template>
-  <div class="container">
-    <div>
-      <h1 class="title">
-        everyconference-web
+  <div class="container mx-auto max-w-4xl">
+    <div class="px-6 lg:px-0">
+      <h1 class="text-4xl font-bold text-blue-900 mt-6">
+        <span class="text-teal-600">Every</span>Conference
       </h1>
-      <h2 class="subtitle">
-        My shining Nuxt.js project
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
+      <div class="mb-10 mt-2 text-gray-600 text-xl">
+        A curated list of all tech conferences happening in 2020.
       </div>
-      <div v-for="converence in converences" :key="converence.url">
-        <ConferenceItem :conference="converence" />
-      </div>
+    </div>
+    <ConferenceItem v-for="conference in conferences" :key="conference.url" :conference="conference" />
+    <div class="text-center mb-4 text-gray-500 text-sm">
+      data by <a href="https://github.com/tech-conferences/conference-data" target="_blank">confs.tech</a>
     </div>
   </div>
 </template>
@@ -40,8 +25,8 @@ export default createComponent({
     ConferenceItem
   },
   async asyncData () {
-    const { data: converences } = await axios.get('https://raw.githubusercontent.com/tech-conferences/conference-data/master/conferences/2020/javascript.json')
-    return { converences }
+    const { data: conferences } = await axios.get('https://raw.githubusercontent.com/tech-conferences/conference-data/master/conferences/2020/javascript.json')
+    return { conferences }
   }
 })
 </script>
@@ -52,34 +37,4 @@ export default createComponent({
   @apply min-h-screen flex justify-center items-center text-center mx-auto;
 }
 */
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
 </style>
