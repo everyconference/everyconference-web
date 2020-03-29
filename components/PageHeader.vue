@@ -7,25 +7,25 @@
       <slot />
     </div>
     <div class="mb-4">
-      <nuxt-link to="/" class="text-teal-600 hover:underline">
+      <a href="/" class="text-teal-600 hover:underline">
         All
-      </nuxt-link>
+      </a>
       &middot;
-      <nuxt-link to="/vue-conferences" class="text-teal-600 hover:underline">
+      <a href="/vue-conferences/" class="text-teal-600 hover:underline">
         Vue
-      </nuxt-link>
+      </a>
       &middot;
-      <nuxt-link to="/react-conferences" class="text-teal-600 hover:underline">
+      <a href="/react-conferences/" class="text-teal-600 hover:underline">
         React
-      </nuxt-link>
+      </a>
       &middot;
-      <nuxt-link to="/angular-conferences" class="text-teal-600 hover:underline">
+      <a href="/angular-conferences/" class="text-teal-600 hover:underline">
         Angular
-      </nuxt-link>
+      </a>
       &middot;
-      <nuxt-link to="/node-conferences" class="text-teal-600 hover:underline">
+      <a href="/node-conferences/" class="text-teal-600 hover:underline">
         Node
-      </nuxt-link>
+      </a>
     </div>
   </div>
 </template>
