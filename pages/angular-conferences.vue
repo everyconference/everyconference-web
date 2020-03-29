@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto max-w-4xl">
     <PageHeader>
-      A curated list of all tech conferences happening in 2020.
+      All Angular conferences happening in 2020.
     </PageHeader>
     <ConferenceList :conferences="conferences" />
     <PageFooter />
@@ -24,7 +24,11 @@ export default defineComponent({
     conferences () {
       const yesterday = new Date()
       yesterday.setDate(yesterday.getDate() - 1)
-      return this.$store.state.conferences.filter(conf => (new Date(conf.endDate)) > yesterday)
+      return this.$store.state.conferences
+        .filter(conf => (new Date(conf.endDate)) > yesterday)
+        .filter((conf) => {
+          return conf.name.toLowerCase().includes('angular') || conf.name.toLowerCase().includes('ng-')
+        })
     }
   },
   async fetch ({ store }) {
@@ -32,11 +36,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-  @apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
-</style>

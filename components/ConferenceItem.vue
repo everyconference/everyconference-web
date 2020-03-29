@@ -12,14 +12,14 @@
       {{ conference.city }}, {{ conference.country }}
     </div>
     <div v-if="conference.twitter">
-      <a :href="'https://twitter.com/' + conference.twitter.replace('@','')">{{ conference.twitter }}</a>
+      <a :href="'https://twitter.com/' + conference.twitter.replace('@','')" target="_blank">{{ conference.twitter }}</a>
     </div>
   </div>
 </template>
 <script>
-import { createComponent } from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 
-export default createComponent({
+export default defineComponent({
   props: {
     conference: Object
   },
