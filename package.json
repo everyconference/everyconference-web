@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
+    "updateindex": "cd ./algolia && yarn updateindex && cd ..",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
