@@ -1,6 +1,6 @@
 
-import axios from 'axios'
-import algoliasearch from 'algoliasearch';
+const axios = require('axios');
+const algoliasearch = require('algoliasearch');
 
 async function updateIndex() {
 
