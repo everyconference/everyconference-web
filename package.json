@@ -16,7 +16,8 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
     "@vue/composition-api": "^0.4.0",
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.0.0",
+    "vue-instantsearch": "^2.7.0"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
