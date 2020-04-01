@@ -7,11 +7,18 @@ async function updateIndex() {
   const client = algoliasearch('FE3LXVPW06', process.env.ADMIN_KEY);
   const index = client.initIndex('everyconference_conferences');
 
-  const { data: conferences } = await axios.get('https://raw.githubusercontent.com/tech-conferences/conference-data/master/conferences/2020/javascript.json');
+  const { data } = await axios.get('https://raw.githubusercontent.com/tech-conferences/conference-data/master/conferences/2020/javascript.json');
 
-  index.saveObjects(conferences, { autoGenerateObjectIDIfNotExist: true });
+  const conferences = data.map(item => ({
+    ...item,
+    startTimestamp: Math.floor((new Date(item.startDate)).getTime() / 1000),
+    endTimestamp: Math.floor((new Date(item.endDate)).getTime() / 1000)
+  }))
+
+  index.replaceAllObjects(conferences, { safe: true, autoGenerateObjectIDIfNotExist: true });
 
   return 'index updated';
 }
 
-updateIndex().then(log => console.log(log));
+// since the index is currently up to date, do not rebuild the index every time
+// updateIndex().then(log => console.log(log));

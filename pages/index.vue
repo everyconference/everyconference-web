@@ -5,32 +5,44 @@
     </PageHeader>
 
     <ais-instant-search-ssr>
-      <ais-search-box />
-      <ais-stats />
-<!--      <ais-refinement-list attribute="country" />-->
-      <ais-hits>
-        <template
-          slot="item"
-          slot-scope="{ item }"
-        >
-          <p>
-            <ais-highlight
-              attribute="name"
-              :hit="item"
-            />
+      <ais-search-box autofocus show-loading-indicator />
+      <ais-stats>
+        <template slot-scope="{ nbHits, query }">
+          <p v-if="query.length > 0">
+            {{ nbHits }} conferences found
           </p>
-<!--          <p>-->
-<!--            <ais-highlight-->
-<!--              attribute="country"-->
-<!--              :hit="item"-->
-<!--            />-->
-<!--          </p>-->
+          <span v-else />
         </template>
-      </ais-hits>
-      <ais-pagination />
+      </ais-stats>
+      <!--      <ais-refinement-list attribute="country" />-->
+      <ais-infinite-hits>
+        <template slot-scope="{ items, refineNext }">
+          <div v-for="item in addConferenceDate(items)" :key="item.objectID" class="rounded-md overflow-hidden shadow-md mb-6 px-6 py-4 text-left bg-white">
+            <div class="float-right text-xl text-gray-600 mt-2">
+              {{ item.confdate }}
+            </div>
+            <div class="text-3xl font-bold text-blue-900">
+              <a :href="item.url" target="_blank">
+                <ais-highlight attribute="name" :hit="item" />
+              </a>
+            </div>
+            <div class="text-gray-700">
+              <ais-highlight attribute="city" :hit="item" />, <ais-highlight attribute="country" :hit="item" />
+            </div>
+            <div v-if="item.twitter">
+              <a :href="'https://twitter.com/' + item.twitter.replace('@','')" target="_blank">
+                <ais-highlight attribute="twitter" :hit="item" />
+              </a>
+            </div>
+          </div>
+          <div>
+            <button @click="refineNext">
+              Show more results
+            </button>
+          </div>
+        </template>
+      </ais-infinite-hits>
     </ais-instant-search-ssr>
-
-    <ConferenceList :conferences="conferences" />
     <PageFooter />
   </div>
 </template>
@@ -40,18 +52,16 @@ import { defineComponent } from '@vue/composition-api'
 import {
   AisInstantSearchSsr,
   AisRefinementList,
-  AisHits,
+  AisInfiniteHits,
   AisHighlight,
   AisSearchBox,
   AisStats,
-  AisPagination,
   createInstantSearch
 } from 'vue-instantsearch'
 import algoliasearch from 'algoliasearch/lite'
 
 import PageFooter from '../components/PageFooter'
 import PageHeader from '../components/PageHeader.vue'
-import ConferenceList from '~/components/ConferenceList.vue'
 
 const searchClient = algoliasearch(
   'FE3LXVPW06',
@@ -64,11 +74,24 @@ const { instantsearch, rootMixin } = createInstantSearch({
 })
 
 export default defineComponent({
+  components: {
+    AisInstantSearchSsr,
+    AisRefinementList,
+    AisInfiniteHits,
+    AisHighlight,
+    AisSearchBox,
+    AisStats,
+    PageHeader,
+    PageFooter
+  },
   asyncData () {
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
     return instantsearch
       .findResultsState({
         // find out which parameters to use here using ais-state-results
-        // query: 'iphone',
+        filters: `endTimestamp > ${Math.floor(yesterday.getTime() / 1000)}`
+        // filters: `endDate > '${yesterdayStr}'`
         // hitsPerPage: 5,
         // disjunctiveFacets: ['country'],
         // disjunctiveFacetsRefinements: { country: ['France'] }
@@ -92,34 +115,50 @@ export default defineComponent({
       ]
     }
   },
-
-  components: {
-    AisInstantSearchSsr,
-    AisRefinementList,
-    AisHits,
-    AisHighlight,
-    AisSearchBox,
-    AisStats,
-    AisPagination,
-
-    ConferenceList,
-    PageHeader,
-    PageFooter
-  },
-  computed: {
-    conferences () {
-      const yesterday = new Date()
-      yesterday.setDate(yesterday.getDate() - 1)
-      return this.$store.state.conferences.filter(conf => (new Date(conf.endDate)) > yesterday)
+  methods: {
+    addConferenceDate (items) {
+      const monthnames = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ]
+      return items.map((item) => {
+        const start = new Date(item.startDate)
+        const end = new Date(item.endDate)
+        let confdate = ''
+        if (start.getMonth() !== end.getMonth()) {
+          confdate = start.getDate() + ' ' + monthnames[start.getMonth()] +
+            ' - ' + end.getDate() + ' ' + monthnames[end.getMonth()] +
+            ' ' + start.getFullYear()
+        } else if (start.getDate() !== end.getDate()) {
+          confdate = start.getDate() + ' - ' + end.getDate() +
+            ' ' + monthnames[start.getMonth()] +
+            ' ' + start.getFullYear()
+        } else {
+          confdate = start.getDate() + ' ' + monthnames[start.getMonth()] + ' ' + start.getFullYear()
+        }
+        return { ...item, confdate }
+      })
     }
-  },
-  async fetch ({ store }) {
-    await store.dispatch('loadConferences')
   }
 })
 </script>
 
 <style>
+  [class^=ais-] {
+      font-size: inherit;
+      box-sizing: inherit;
+  }
+
 /* Sample `apply` at-rules with Tailwind CSS
 .container {
   @apply min-h-screen flex justify-center items-center text-center mx-auto;
