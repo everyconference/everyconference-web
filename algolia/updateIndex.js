@@ -45,7 +45,7 @@ function getConferenceDate (conference) {
 async function updateIndex() {
 
   const client = algoliasearch('FE3LXVPW06', process.env.ADMIN_KEY);
-  const index = client.initIndex('everyconference_conferences');
+  const mainIndex = client.initIndex('everyconference_conferences');
 
   const { data } = await axios.get('https://raw.githubusercontent.com/tech-conferences/conference-data/master/conferences/2020/javascript.json');
 
@@ -57,7 +57,8 @@ async function updateIndex() {
     _tags: getTags(conference)
   }));
 
-  index.replaceAllObjects(conferences, { safe: true, autoGenerateObjectIDIfNotExist: true });
+  await mainIndex.setSettings({ replicas: [ 'everyconference_conferences_by_start' ] });
+  mainIndex.replaceAllObjects(conferences, { safe: true, autoGenerateObjectIDIfNotExist: true });
 
   return 'index updated';
 }

@@ -4,6 +4,9 @@
       All React conferences happening in 2020.
     </PageHeader>
     <ais-instant-search-ssr>
+      <ais-configure
+        :hits-per-page.camel="1000"
+      />
       <ais-search-box autofocus show-loading-indicator />
       <ais-stats>
         <template slot-scope="{ nbHits, query }">
@@ -15,7 +18,7 @@
       </ais-stats>
       <!--      <ais-refinement-list attribute="country" />-->
       <ais-infinite-hits>
-        <template slot-scope="{ items, refineNext }">
+        <template slot-scope="{ items }">
           <div v-for="item in items" :key="item.objectID" class="rounded-md overflow-hidden shadow-md mb-6 px-6 py-4 text-left bg-white">
             <div class="float-right text-xl text-gray-600 mt-2">
               {{ item.confdate }}
@@ -34,11 +37,6 @@
               </a>
             </div>
           </div>
-          <div>
-            <button @click="refineNext">
-              Show more results
-            </button>
-          </div>
         </template>
       </ais-infinite-hits>
     </ais-instant-search-ssr>
@@ -49,6 +47,7 @@
 <script>
 import { defineComponent } from '@vue/composition-api'
 import {
+  AisConfigure,
   AisInstantSearchSsr,
   AisRefinementList,
   AisInfiniteHits,
@@ -74,6 +73,7 @@ const { instantsearch, rootMixin } = createInstantSearch({
 
 export default defineComponent({
   components: {
+    AisConfigure,
     AisInstantSearchSsr,
     AisRefinementList,
     AisInfiniteHits,
