@@ -3,7 +3,6 @@
     <PageHeader>
       A curated list of all tech conferences happening in 2020.
     </PageHeader>
-
     <ais-instant-search-ssr>
       <ais-search-box autofocus show-loading-indicator />
       <ais-stats>
@@ -17,7 +16,7 @@
       <!--      <ais-refinement-list attribute="country" />-->
       <ais-infinite-hits>
         <template slot-scope="{ items, refineNext }">
-          <div v-for="item in addConferenceDate(items)" :key="item.objectID" class="rounded-md overflow-hidden shadow-md mb-6 px-6 py-4 text-left bg-white">
+          <div v-for="item in items" :key="item.objectID" class="rounded-md overflow-hidden shadow-md mb-6 px-6 py-4 text-left bg-white">
             <div class="float-right text-xl text-gray-600 mt-2">
               {{ item.confdate }}
             </div>
@@ -91,10 +90,7 @@ export default defineComponent({
       .findResultsState({
         // find out which parameters to use here using ais-state-results
         filters: `endTimestamp > ${Math.floor(yesterday.getTime() / 1000)}`
-        // filters: `endDate > '${yesterdayStr}'`
-        // hitsPerPage: 5,
-        // disjunctiveFacets: ['country'],
-        // disjunctiveFacetsRefinements: { country: ['France'] }
+        // filters: `endTimestamp > ${Math.floor(yesterday.getTime() / 1000)}${(this.tags.length > 0 ? ` AND (${this.tags.join(' OR ')})` : '')}`
       })
       .then(() => ({
         instantSearchState: instantsearch.getState()
@@ -113,41 +109,6 @@ export default defineComponent({
             'https://cdn.jsdelivr.net/npm/instantsearch.css@7.3.1/themes/algolia-min.css'
         }
       ]
-    }
-  },
-  methods: {
-    addConferenceDate (items) {
-      const monthnames = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ]
-      return items.map((item) => {
-        const start = new Date(item.startDate)
-        const end = new Date(item.endDate)
-        let confdate = ''
-        if (start.getMonth() !== end.getMonth()) {
-          confdate = start.getDate() + ' ' + monthnames[start.getMonth()] +
-            ' - ' + end.getDate() + ' ' + monthnames[end.getMonth()] +
-            ' ' + start.getFullYear()
-        } else if (start.getDate() !== end.getDate()) {
-          confdate = start.getDate() + ' - ' + end.getDate() +
-            ' ' + monthnames[start.getMonth()] +
-            ' ' + start.getFullYear()
-        } else {
-          confdate = start.getDate() + ' ' + monthnames[start.getMonth()] + ' ' + start.getFullYear()
-        }
-        return { ...item, confdate }
-      })
     }
   }
 })
